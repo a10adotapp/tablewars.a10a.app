@@ -1,0 +1,14 @@
+services:
+  app:
+    image: localhost/tablewars.a10a.app:dev
+    build:
+      context: ..
+      dockerfile: ./.devcontainer/Dockerfile
+    container_name: tablewars-a10a-app-app
+    env_file:
+      - .env
+    command: sleep infinity
+    volumes:
+      - ..:/workspace
+    ports:
+      - 3000:3000
