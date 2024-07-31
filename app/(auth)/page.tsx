@@ -1,7 +1,14 @@
-export default async function Page() {
+"use client";
+
+import { ScreenSizeContextProvider } from "@/contexts/screen-size-context";
+import dynamic from "next/dynamic";
+
+const GameContainer = dynamic(() => import("./_components/game-container"), { ssr: false });
+
+export default function Page() {
   return (
-    <main>
-      tablewars.a10a.app
-    </main>
+    <ScreenSizeContextProvider>
+      <GameContainer />
+    </ScreenSizeContextProvider>
   );
 }
