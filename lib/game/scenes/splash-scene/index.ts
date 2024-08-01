@@ -1,5 +1,6 @@
-import { characterImages } from "@/lib/game/files";
+import { characterImages, effectImages } from "@/lib/game/files";
 import { Scene } from "phaser";
+import { PointerSparcleLayerManager } from "../common-layers/pointer-sparcle-layer-manager";
 import { BackgroundLayerManager } from "./layers/background-layer-manager";
 import { StartActionLayerManager } from "./layers/start-action-layer-manager";
 import { TitleLayerManager } from "./layers/title-layer-manager";
@@ -11,6 +12,8 @@ export class SplashScene extends Scene {
 
   startActionLayerManager: StartActionLayerManager;
 
+  pointerSparcleLayerManager: PointerSparcleLayerManager;
+
   constructor() {
     super("SplashScene");
 
@@ -21,11 +24,17 @@ export class SplashScene extends Scene {
     this.startActionLayerManager = new StartActionLayerManager(this, {
       startAction: this.startAction.bind(this),
     });
+
+    this.pointerSparcleLayerManager = new PointerSparcleLayerManager(this);
   }
 
   preload() {
     for (const characterImage of characterImages) {
       this.load.image(characterImage);
+    }
+
+    for (const effectImage of effectImages) {
+      this.load.image(effectImage);
     }
   }
 
@@ -35,6 +44,8 @@ export class SplashScene extends Scene {
     this.titleLayerManager.init();
 
     this.startActionLayerManager.init();
+
+    this.pointerSparcleLayerManager.init();
   }
 
   startAction() {
