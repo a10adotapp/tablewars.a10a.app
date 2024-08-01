@@ -1,7 +1,7 @@
 "use client";
 
 import { useScreenSize } from "@/contexts/screen-size-context";
-import { newGame } from "@/lib/auth/game/game";
+import { newGame } from "@/lib/game/game";
 import { Game } from "phaser";
 import { useEffect, useRef } from "react";
 

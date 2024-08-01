@@ -1,5 +1,6 @@
 import { Game, Scale } from "phaser";
-import { MainScene } from "./scenes/main-scene";
+import { SecondScene } from "./scenes/second-scene";
+import { SplashScene } from "./scenes/splash-scene";
 
 export function newGame(parent: string, {
   aspectRatio,
@@ -13,9 +14,10 @@ export function newGame(parent: string, {
     scale: {
       mode: Scale.ScaleModes.FIT,
     },
-    backgroundColor: "#3333cc",
+    backgroundColor: "#ffffff",
     scene: [
-      MainScene,
+      SplashScene,
+      SecondScene,
     ],
     input: {
       activePointers: 2,
