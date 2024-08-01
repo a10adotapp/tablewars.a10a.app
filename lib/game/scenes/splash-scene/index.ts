@@ -49,7 +49,6 @@ export class SplashScene extends Scene {
   }
 
   startAction() {
-    debugger;
-    this.scene.start("SecondScene");
+    this.scene.start("PlayScene");
   }
 }

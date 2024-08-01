@@ -1,5 +1,5 @@
 import { Game, Scale } from "phaser";
-import { SecondScene } from "./scenes/second-scene";
+import { PlayScene } from "./scenes/play-scene";
 import { SplashScene } from "./scenes/splash-scene";
 
 export function newGame(parent: string, {
@@ -17,7 +17,7 @@ export function newGame(parent: string, {
     backgroundColor: "#ffffff",
     scene: [
       SplashScene,
-      SecondScene,
+      PlayScene,
     ],
     input: {
       activePointers: 2,
