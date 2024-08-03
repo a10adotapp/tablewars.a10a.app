@@ -12,3 +12,13 @@ services:
       - ..:/workspace
     ports:
       - 3000:3000
+
+  db:
+    image: mysql:8.0.28
+    container_name: tablewars-a10a-app-db
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_TCP_PORT: 3306
+      MYSQL_DATABASE: "tablewars_a10a_app_dev"
+    ports:
+      - 3306:3306

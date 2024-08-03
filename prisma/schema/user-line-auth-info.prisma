@@ -1,0 +1,19 @@
+/// LINE認証情報
+///
+/// @namespace 認証
+model UserLineAuthInfo {
+  id Int @id @default(autoincrement()) @map("id")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  userId Int @map("user_id")
+
+  /// ベンダーユーザーID
+  vendorUserId String @map("vendor_user_id")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("user_line_auth_infos")
+}

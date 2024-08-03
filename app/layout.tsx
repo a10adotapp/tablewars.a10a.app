@@ -1,3 +1,4 @@
+import { AuthUserContextProvider } from "@/contexts/auth-user-context";
 import { ReactNode } from "react";
 import { preload } from "react-dom";
 import "./globals.css";
@@ -16,7 +17,9 @@ export default function Layout({
   return (
     <html>
       <body>
-        {children}
+        <AuthUserContextProvider>
+          {children}
+        </AuthUserContextProvider>
       </body>
     </html>
   );
