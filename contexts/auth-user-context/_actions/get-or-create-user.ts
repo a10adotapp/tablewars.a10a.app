@@ -1,18 +1,24 @@
 "use server";
 
+import { authOptions } from "@/lib/auth/auth-options";
 import { uuid } from "@/lib/user/uuid";
 import { prisma } from "@/prisma/client";
-import { User, UserLineAuthInfo } from "@/prisma/generated/client";
+import { User } from "@/prisma/generated/client";
+import { getServerSession } from "next-auth";
 
-export async function getOrCreateUserLineAuthInfo(
+export async function getOrCreateUser(
   vendorUserId: string,
   data: {
     name: string;
   },
-): Promise<UserLineAuthInfo & {
-  user: User;
-}> {
+): Promise<User> {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (session?.user) {
+      return session.user;
+    }
+
     const userLineAuthInfo = await prisma.userLineAuthInfo.findFirst({
       include: {
         user: true,
@@ -24,7 +30,7 @@ export async function getOrCreateUserLineAuthInfo(
     });
 
     if (userLineAuthInfo) {
-      return userLineAuthInfo;
+      return userLineAuthInfo.user;
     }
 
     const user = await prisma.user.create({
@@ -38,26 +44,20 @@ export async function getOrCreateUserLineAuthInfo(
       data: {
         userId: user.id,
         vendorUserId,
-      }
+      },
     });
 
-    return await prisma.userLineAuthInfo.findFirstOrThrow({
-      include: {
-        user: true,
-      },
-      where: {
-        deletedAt: null,
-        vendorUserId,
-      },
-    });
+    return user;
   } catch (err) {
     console.error(
-      "getUserLineAuthInfo",
+      "getOrCreateUser",
       err,
-      vendorUserId,
-      data,
+      {
+        vendorUserId,
+        data,
+      },
     );
 
     throw err;
-  }
+  };
 }

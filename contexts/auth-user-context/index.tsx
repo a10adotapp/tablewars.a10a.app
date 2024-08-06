@@ -2,11 +2,11 @@
 
 import { User } from "@/prisma/generated/client";
 import liff from "@line/liff";
-import { signIn as nextAuthSignIn } from "next-auth/react";
-import { createContext, ReactNode, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { signIn } from "next-auth/react";
+import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { getLineLiffId } from "./_actions/get-line-liff-id";
 import { getLineOfficialAccountFriendshipStatus } from "./_actions/get-line-official-account-friendship-status";
-import { getUser } from "./_actions/get-user";
+import { getOrCreateUser } from "./_actions/get-or-create-user";
 
 type authUserContext = {
   user?: User;
@@ -29,39 +29,6 @@ export function AuthUserContextProvider({
 
   const [authUser, setAuthUser] = useState<authUserContext>({});
 
-  const signIn = useMemo(() => {
-    return async ({
-      userId,
-      displayName,
-    }: {
-      userId: string;
-      displayName: string;
-    }): Promise<User> => {
-      let safeLoopCount = 5;
-
-      while (safeLoopCount-- > 0) {
-        const user = await getUser();
-
-        if (user) {
-          return user;
-        }
-
-        const signInResponse = await nextAuthSignIn("credentials", {
-          redirect: false,
-          vendor: "line",
-          userId,
-          displayName,
-        });
-
-        if (signInResponse?.error) {
-          throw new Error(signInResponse.error);
-        }
-      }
-
-      throw new Error("authorization failed");
-    };
-  }, []);
-
   useEffect(() => {
     try {
       if (!hasRunRef.current) {
@@ -82,11 +49,20 @@ export function AuthUserContextProvider({
             userId,
             displayName,
           } = await liff.getProfile();
-    
-          const authUser = await signIn({
-            userId,
-            displayName,
+
+          const authUser = await getOrCreateUser(userId, {
+            name: displayName,
           });
+
+          const signInResponse = await signIn("credentials", {
+            redirect: false,
+            vendor: "line",
+            userId: authUser.id,
+          });
+      
+          if (!signInResponse?.ok) {
+            throw new Error(signInResponse?.error || "unauthorized");
+          }
 
           const accessToken = liff.getAccessToken();
 
@@ -108,7 +84,7 @@ export function AuthUserContextProvider({
 
       alert(JSON.stringify(err, null, "  "));
     }
-  }, [signIn]);
+  }, []);
 
   return (
     <AuthUserContext.Provider value={authUser}>
